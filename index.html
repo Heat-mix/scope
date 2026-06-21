@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#05070d" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="おしろ" />
+  <!-- すべて Netlify の公開ルートから取得する。iOS は apple-touch-icon を優先する。 -->
+  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <!-- 新規ファイル名を最後に置き、iOS の古いアイコンキャッシュを避ける。 -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-v2.png">
+  <link rel="apple-touch-icon-precomposed" sizes="180x180" href="/apple-touch-icon-v2.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+  <title>おしろスコープ</title>
+  <style>
+    :root { color-scheme: dark; --cyan:#79fff2; --aqua:#20d2d0; --ink:#05070d; --panel:#07111f; --text:#e8fbff; --muted:#96b8c8; }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body { margin:0; min-height:100dvh; display:grid; place-items:center; background:radial-gradient(circle at 50% -5%,#173a56 0,#07111f 35%,#05070d 75%); color:var(--text); font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif; }
+    .app { width:min(100%, 520px); min-height:100dvh; padding:max(18px, env(safe-area-inset-top)) 16px max(24px, env(safe-area-inset-bottom)); background:linear-gradient(145deg,rgba(20,42,61,.86),rgba(4,8,16,.94)); }
+    .title { text-align:center; padding:3px 0 17px; }
+    h1 { margin:0; letter-spacing:.14em; font-size:clamp(1.4rem,6vw,1.85rem); text-shadow:0 0 18px #33cfd280; }
+    .subtitle { margin:6px 0 0; color:#a9dbe5; font-size:.8rem; letter-spacing:.12em; }
+    .device { border:2px solid transparent; border-radius:25px; padding:10px; background:linear-gradient(#0a1521,#0a1521) padding-box, linear-gradient(135deg,#f5ffff 0%,#6a8092 18%,#d7e7ed 39%,#465564 58%,#dceef5 81%,#516879) border-box; box-shadow:0 18px 36px #000a, inset 0 1px 1px #fff5; }
+    .scope { position:relative; height:29dvh; min-height:210px; max-height:310px; overflow:hidden; border-radius:16px; background:#000; border:1px solid #4c6673; box-shadow:inset 0 0 28px #0091a629, inset 0 0 2px #c7ffff; }
+    canvas { width:100%; height:100%; display:block; }
+    .screen-label { position:absolute; top:12px; left:14px; color:#c8fdffb8; font:600 .62rem ui-monospace,monospace; letter-spacing:.13em; pointer-events:none; }
+    .status { position:absolute; top:12px; right:14px; display:flex; align-items:center; gap:6px; color:#a5c1c8; font:.62rem ui-monospace,monospace; }
+    .lamp { width:7px; height:7px; border-radius:50%; background:#3d5660; } .lamp.on { background:#58ffe2; box-shadow:0 0 9px #38ffdc; }
+    .controls { margin-top:10px; padding:18px 12px 6px; border-radius:17px; background:linear-gradient(145deg,#fbfeff 0%,#eaf1ff 42%,#e4e3ff 100%); box-shadow:inset 0 1px 2px #fff,0 5px 14px #0006; color:#253a5b; }
+    .transport { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:18px; }
+    button { border:1px solid #b9cdeb; cursor:pointer; touch-action:manipulation; color:#284568; font:700 .91rem -apple-system,BlinkMacSystemFont,"Hiragino Sans",sans-serif; letter-spacing:.03em; border-radius:12px; min-height:50px; background:linear-gradient(180deg,#fff 0%,#eaf4ff 48%,#d3e3f5 100%); box-shadow:0 4px 0 #a6bad4,0 8px 14px #6d85a433,inset 0 1px 1px #fff; transition:transform .08s ease,box-shadow .08s ease,filter .16s ease; }
+    button:active { transform:translateY(3px); box-shadow:0 1px 0 #a6bad4,0 3px 8px #6d85a433,inset 0 2px 6px #aec9e6; }
+    button.play { color:#17455a; background:linear-gradient(180deg,#faffff,#d9f9ff 55%,#bde3ef); } button.play.active { color:#153c63; background:linear-gradient(180deg,#e9e7ff,#bcd7ff 55%,#91eefa); box-shadow:0 4px 0 #7996d1,0 0 17px #43dff0a8,inset 0 1px 2px #fff; }
+    .field-label { display:flex; justify-content:space-between; align-items:baseline; margin:0 2px 8px; color:#395172; font-size:.78rem; letter-spacing:.08em; } .unit { color:#6685a6; font-size:.68rem; }
+    .frequency { display:flex; gap:9px; margin-bottom:7px; }
+    input[type=number] { min-width:0; flex:1; height:52px; border:1px solid #b7cbe5; border-radius:11px; padding:0 14px; color:#254364; background:linear-gradient(180deg,#fff,#edf5ff); box-shadow:inset 0 2px 7px #b5c8df66; font:700 1.12rem ui-monospace,monospace; outline:none; } input[type=number]:focus { border-color:#55cde4; box-shadow:0 0 0 2px #71dcf066,inset 0 2px 7px #b5c8df66; }
+    .apply { min-width:76px; }
+    .notice { min-height:18px; margin:0 2px 16px; color:#5c7894; font-size:.68rem; } .notice.warning { color:#268379; text-shadow:0 0 9px #24d8a855; }
+    .section { margin:0 0 16px; } .section h2 { margin:0 2px 8px; color:#526b8d; font-size:.71rem; font-weight:700; letter-spacing:.12em; }
+    .preset-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; } .preset-grid button { min-height:47px; padding:3px; font-size:.78rem; }
+    .wave-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:8px; } .wave-grid button { min-height:48px; font-size:.82rem; }
+    .duty-section { display:none; } .duty-section.visible { display:block; }
+    .duty-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:7px; } .duty-grid button { min-height:44px; padding:2px; font-size:.74rem; }
+    button.selected { color:#273f78; border-color:#76c7ef; background:linear-gradient(180deg,#eeeaff,#b9ccff 52%,#a0f3f4); box-shadow:0 4px 0 #7599d0,0 0 17px #35dcefaa,inset 0 1px 2px #fff; }
+    .volume-row { display:flex; align-items:center; gap:12px; background:linear-gradient(180deg,#f9fcff,#e1edff); border:1px solid #b7cae6; border-radius:12px; padding:12px; box-shadow:inset 0 2px 7px #b5c8df55; } input[type=range] { flex:1; accent-color:#3bcad6; } output { width:35px; color:#3c6285; font:700 .75rem ui-monospace,monospace; text-align:right; }
+    .foot { margin:15px 0 0; text-align:center; color:#628793; font-size:.61rem; letter-spacing:.08em; }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="title"><h1>おしろスコープ</h1><p class="subtitle">音の波を、光で見る</p></header>
+    <section class="device" aria-label="おしろスコープ本体">
+      <div class="scope"><canvas id="scope" aria-label="音声波形表示"></canvas><span class="screen-label">AURORA OSCILLOSCOPE</span><span class="status"><i class="lamp" id="lamp"></i><span id="statusText">STANDBY</span></span></div>
+      <div class="controls">
+        <div class="transport"><button id="playBtn" class="play">▶ 再 生</button><button id="stopBtn">■ 停 止</button></div>
+        <div class="field-label"><label for="frequency">FREQUENCY</label><span class="unit">1.00 — 15000.00 Hz</span></div>
+        <div class="frequency"><input id="frequency" type="number" inputmode="decimal" min="1" max="15000" step="0.01" value="440.00" aria-label="周波数 Hz" /><button id="applyBtn" class="apply">設定</button></div>
+        <p class="notice" id="notice">周波数を入力して設定できます。</p>
+        <section class="section"><h2>PRESET FREQUENCY</h2><div class="preset-grid" id="presets"></div></section>
+        <section class="section"><h2>WAVEFORM</h2><div class="wave-grid" id="waves"></div></section>
+        <section class="section duty-section" id="dutySection"><h2>DUTY CYCLE</h2><div class="duty-grid" id="duties"></div></section>
+        <section class="section"><h2>VOLUME</h2><div class="volume-row"><input id="volume" type="range" min="0" max="0.4" step="0.01" value="0.2" aria-label="音量" /><output id="volumeValue">20%</output></div></section>
+      </div>
+    </section>
+    <p class="foot">USER GESTURE REQUIRED FOR AUDIO OUTPUT</p>
+  </main>
+  <script>
+    (() => {
+      const presets = [174,285,396,432,440,444,528,741,963,4096];
+      const waveforms = [{label:'サイン波',type:'sine'},{label:'三角波',type:'triangle'},{label:'矩形波',type:'square'},{label:'ノコギリ波',type:'sawtooth'}];
+      const el = { canvas:document.querySelector('#scope'), play:document.querySelector('#playBtn'), stop:document.querySelector('#stopBtn'), freq:document.querySelector('#frequency'), apply:document.querySelector('#applyBtn'), notice:document.querySelector('#notice'), presets:document.querySelector('#presets'), waves:document.querySelector('#waves'), dutySection:document.querySelector('#dutySection'), duties:document.querySelector('#duties'), volume:document.querySelector('#volume'), volumeValue:document.querySelector('#volumeValue'), lamp:document.querySelector('#lamp'), status:document.querySelector('#statusText') };
+      let audioContext, oscillator, gain, analyser, data, raf, currentWave='sine', dutyCycle=.5;
+      const ctx = el.canvas.getContext('2d');
+      function setFrequency(value) {
+        const frequency = Number(value);
+        if (!Number.isFinite(frequency) || frequency < 1 || frequency > 15000) { el.notice.textContent='1.00Hz〜15000.00Hzの範囲で入力してください。'; el.notice.className='notice warning'; return false; }
+        el.freq.value=frequency.toFixed(2); if (oscillator) oscillator.frequency.setTargetAtTime(frequency,audioContext.currentTime,.015);
+        el.notice.textContent=frequency < 20 ? '20Hz未満は聞こえにくい、または聞こえない場合があります。' : '周波数を入力して設定できます。'; el.notice.className=frequency < 20 ? 'notice warning' : 'notice'; updateSelections(); return true;
+      }
+      function updateSelections() { const f=Number(el.freq.value); [...el.presets.children].forEach(b=>b.classList.toggle('selected',Number(b.dataset.value)===f)); [...el.waves.children].forEach(b=>b.classList.toggle('selected',b.dataset.type===currentWave)); [...el.duties.children].forEach(b=>b.classList.toggle('selected',Number(b.dataset.duty)===dutyCycle)); el.dutySection.classList.toggle('visible',currentWave==='square'); }
+      function createDutyWave(duty) { const harmonics=64, real=new Float32Array(harmonics+1), imag=new Float32Array(harmonics+1); for(let n=1;n<=harmonics;n++){ const angle=2*Math.PI*n*duty; real[n]=(2*Math.sin(angle))/(Math.PI*n); imag[n]=(2*(1-Math.cos(angle)))/(Math.PI*n); } return audioContext.createPeriodicWave(real,imag,{disableNormalization:false}); }
+      function applyWave() { if(!oscillator) return; if(currentWave==='square') oscillator.setPeriodicWave(createDutyWave(dutyCycle)); else oscillator.type=currentWave; }
+      presets.forEach(value => { const b=document.createElement('button'); b.textContent=value+'Hz'; b.dataset.value=value; b.onclick=()=>setFrequency(value); el.presets.append(b); });
+      waveforms.forEach(({label,type}) => { const b=document.createElement('button'); b.textContent=label; b.dataset.type=type; b.onclick=()=>{currentWave=type; applyWave(); updateSelections();}; el.waves.append(b); });
+      [.125,.25,.5,.75].forEach(duty => { const b=document.createElement('button'); b.textContent=(duty*100)+'%'; b.dataset.duty=duty; b.onclick=()=>{dutyCycle=duty; applyWave(); updateSelections();}; el.duties.append(b); });
+      async function play() { if (!setFrequency(el.freq.value)) return; const AC=window.AudioContext||window.webkitAudioContext; if(!AC) { el.notice.textContent='このブラウザではWeb Audio APIを利用できません。'; return; } if(!audioContext) audioContext=new AC(); await audioContext.resume(); stop(false); oscillator=audioContext.createOscillator(); gain=audioContext.createGain(); analyser=audioContext.createAnalyser(); analyser.fftSize=2048; data=new Uint8Array(analyser.fftSize); oscillator.frequency.value=Number(el.freq.value); applyWave(); gain.gain.setValueAtTime(0,audioContext.currentTime); gain.gain.linearRampToValueAtTime(Number(el.volume.value),audioContext.currentTime+.04); oscillator.connect(gain).connect(analyser).connect(audioContext.destination); oscillator.start(); el.play.classList.add('active'); el.lamp.classList.add('on'); el.status.textContent='RUNNING'; draw(); }
+      function stop(clear=true) { if(oscillator) { try { oscillator.stop(); } catch(e) {} oscillator.disconnect(); oscillator=null; } cancelAnimationFrame(raf); el.play.classList.remove('active'); el.lamp.classList.remove('on'); el.status.textContent='STANDBY'; if(clear) idleScreen(); }
+      function resize() { const r=el.canvas.getBoundingClientRect(), d=window.devicePixelRatio||1; el.canvas.width=r.width*d; el.canvas.height=r.height*d; ctx.setTransform(d,0,0,d,0,0); }
+      function background(w,h) { ctx.fillStyle='#000'; ctx.fillRect(0,0,w,h); ctx.strokeStyle='rgba(67,158,169,.10)'; ctx.lineWidth=1; for(let x=0;x<w;x+=w/10){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke();} for(let y=0;y<h;y+=h/6){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke();} }
+      function trace(points,w,h,alpha,width,blur) { const g=ctx.createLinearGradient(0,0,w,0); g.addColorStop(0,'#1672ff'); g.addColorStop(.48,'#6cfbff'); g.addColorStop(1,'#18e5a1'); ctx.beginPath(); points.forEach((y,i)=> i?ctx.lineTo(i*w/(points.length-1),y):ctx.moveTo(0,y)); ctx.strokeStyle=g;ctx.globalAlpha=alpha;ctx.lineWidth=width;ctx.shadowColor='#21e4df';ctx.shadowBlur=blur;ctx.stroke();ctx.globalAlpha=1;ctx.shadowBlur=0; }
+      function draw() { const {width:w,height:h}=el.canvas.getBoundingClientRect(); background(w,h); if(!analyser) return; analyser.getByteTimeDomainData(data); const pts=[]; for(let i=0;i<data.length;i+=4) pts.push((data[i]/255)*h); trace(pts,w,h,.16,14,24); trace(pts,w,h,.32,6,13); trace(pts,w,h,1,1.5,5); raf=requestAnimationFrame(draw); }
+      function idleScreen(){ resize(); const {width:w,height:h}=el.canvas.getBoundingClientRect(); background(w,h); const pts=[]; for(let i=0;i<100;i++)pts.push(h/2+Math.sin(i*.18)*2); trace(pts,w,h,.22,3,10); }
+      el.play.onclick=play; el.stop.onclick=()=>stop(); el.apply.onclick=()=>setFrequency(el.freq.value); el.freq.onchange=()=>setFrequency(el.freq.value); el.freq.onkeydown=e=>{if(e.key==='Enter')setFrequency(el.freq.value)}; el.volume.oninput=()=>{const v=Number(el.volume.value);el.volumeValue.textContent=Math.round(v/.4*100)+'%';if(gain)gain.gain.setTargetAtTime(v,audioContext.currentTime,.02)}; new ResizeObserver(idleScreen).observe(el.canvas); updateSelections(); idleScreen();
+    })();
+  </script>
+</body>
+</html>
