@@ -4,18 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#05070d" />
+  <meta name="application-name" content="OSCILLOSCOPE" />
+  <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="おしろ" />
-  <!-- すべて Netlify の公開ルートから取得する。iOS は apple-touch-icon を優先する。 -->
-  <link rel="manifest" href="/manifest.json">
-  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-  <!-- 新規ファイル名を最後に置き、iOS の古いアイコンキャッシュを避ける。 -->
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-v2.png">
-  <link rel="apple-touch-icon-precomposed" sizes="180x180" href="/apple-touch-icon-v2.png" />
-  <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
-  <title>おしろスコープ</title>
+  <meta name="apple-mobile-web-app-title" content="OSCILLOSCOPE" />
+  <link rel="manifest" href="./manifest.webmanifest?v=0.1.3-official" />
+  <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon-v3.png" />
+  <link rel="apple-touch-icon-precomposed" sizes="180x180" href="./apple-touch-icon-v3.png" />
+  <link rel="icon" type="image/png" sizes="64x64" href="./favicon.png?v=0.1.3-official" />
+  <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png?v=0.1.3-official" />
+  <title>OSCILLOSCOPE</title>
   <style>
     :root { color-scheme: dark; --cyan:#79fff2; --aqua:#20d2d0; --ink:#05070d; --panel:#07111f; --text:#e8fbff; --muted:#96b8c8; }
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -56,8 +55,8 @@
 </head>
 <body>
   <main class="app">
-    <header class="title"><h1>おしろスコープ</h1><p class="subtitle">音の波を、光で見る</p></header>
-    <section class="device" aria-label="おしろスコープ本体">
+    <header class="title"><h1>OSCILLOSCOPE</h1><p class="subtitle">音の波を、光で見る</p></header>
+    <section class="device" aria-label="OSCILLOSCOPE本体">
       <div class="scope"><canvas id="scope" aria-label="音声波形表示"></canvas><span class="screen-label">AURORA OSCILLOSCOPE</span><span class="status"><i class="lamp" id="lamp"></i><span id="statusText">STANDBY</span></span></div>
       <div class="controls">
         <div class="transport"><button id="playBtn" class="play">▶ 再 生</button><button id="stopBtn">■ 停 止</button></div>
@@ -72,7 +71,7 @@
         <p id="safeMessage" class="safe-message" role="status" aria-live="polite"></p>
       </div>
     </section>
-    <footer class="foot"><strong>おしろスコープ</strong><span id="versionText">v0.1.3</span><br><span id="updatedText">更新：2026-07-01 16:23</span></footer>
+    <footer class="foot"><strong>OSCILLOSCOPE</strong><span id="versionText">v0.1.3</span><br><span id="updatedText">更新：2026-07-01 16:23</span></footer>
   </main>
   <script>
     (() => {
@@ -201,6 +200,7 @@
       window.addEventListener('pagehide',()=>{ cleanupAudioNodes(false); if(audioContext && audioContext.state==='running') audioContext.suspend().catch(()=>{}); });
       el.version.textContent='v'+APP_VERSION;
       el.updated.textContent='更新：'+APP_UPDATED_AT;
+      if('serviceWorker' in navigator && location.protocol!=='file:') navigator.serviceWorker.register('./sw.js?v=0.1.3-official').catch(()=>{});
       updateSelections();
       idleScreen();
     })();
