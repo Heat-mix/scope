@@ -9,11 +9,11 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="OSCILLOSCOPE" />
-  <link rel="manifest" href="./manifest.webmanifest?v=0.1.3-official" />
+  <link rel="manifest" href="./manifest.webmanifest?v=0.1.4-official" />
   <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon-v3.png" />
   <link rel="apple-touch-icon-precomposed" sizes="180x180" href="./apple-touch-icon-v3.png" />
-  <link rel="icon" type="image/png" sizes="64x64" href="./favicon.png?v=0.1.3-official" />
-  <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png?v=0.1.3-official" />
+  <link rel="icon" type="image/png" sizes="64x64" href="./favicon.png?v=0.1.4-official" />
+  <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png?v=0.1.4-official" />
   <title>OSCILLOSCOPE</title>
   <style>
     :root { color-scheme: dark; --cyan:#79fff2; --aqua:#20d2d0; --ink:#05070d; --panel:#07111f; --text:#e8fbff; --muted:#96b8c8; }
@@ -204,7 +204,7 @@
       window.addEventListener('pagehide',()=>{ cleanupAudioNodes(false); if(audioContext && audioContext.state==='running') audioContext.suspend().catch(()=>{}); });
       el.version.textContent='v'+APP_VERSION;
       el.updated.textContent='更新：'+APP_UPDATED_AT;
-      if('serviceWorker' in navigator && location.protocol!=='file:') navigator.serviceWorker.register('./sw.js?v=0.1.3-official').catch(()=>{});
+      if('serviceWorker' in navigator && location.protocol!=='file:') navigator.serviceWorker.register('./sw.js?v=0.1.4-official').catch(()=>{});
       updateSelections();
       idleScreen();
     })();

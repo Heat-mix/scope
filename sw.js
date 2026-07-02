@@ -1,13 +1,13 @@
-const CACHE_VERSION = 'oscilloscope-v0.1.3-official';
+const CACHE_VERSION = 'oscilloscope-v0.1.4-official';
 const APP_ASSETS = [
   './',
   './index.html',
-  './manifest.webmanifest?v=0.1.3-official',
+  './manifest.webmanifest?v=0.1.4-official',
   './apple-touch-icon-v3.png',
-  './icon-192.png?v=0.1.3-official',
-  './icon-512.png?v=0.1.3-official',
-  './favicon.png?v=0.1.3-official',
-  './app-screenshot.png?v=0.1.3-official'
+  './icon-192.png?v=0.1.4-official',
+  './icon-512.png?v=0.1.4-official',
+  './favicon.png?v=0.1.4-official',
+  './app-screenshot.png?v=0.1.4-official'
 ];
 
 self.addEventListener('install', event => {
