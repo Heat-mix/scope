@@ -71,7 +71,7 @@
         <p id="safeMessage" class="safe-message" role="status" aria-live="polite"></p>
       </div>
     </section>
-    <footer class="foot"><strong>OSCILLOSCOPE</strong><span id="versionText">v0.1.3</span><br><span id="updatedText">更新：2026-07-01 16:23</span></footer>
+    <footer class="foot"><strong>OSCILLOSCOPE</strong><span id="versionText">v0.1.4</span><br><span id="updatedText">更新：2026-07-02</span></footer>
   </main>
   <script>
     (() => {
@@ -90,9 +90,13 @@
       v0.1.3
       Web Audio API点検
       安全終了ボタン追加
+
+      v0.1.4
+      PWAアイコン更新
+      README追加・表示名統一
       */
-      const APP_VERSION = "0.1.3";
-      const APP_UPDATED_AT = "2026-07-01 16:23";
+      const APP_VERSION = "0.1.4";
+      const APP_UPDATED_AT = "2026-07-02";
       const presets = [174,285,396,432,440,444,528,741,963,4096];
       const waveforms = [{label:'サイン波',type:'sine'},{label:'三角波',type:'triangle'},{label:'矩形波',type:'square'},{label:'ノコギリ波',type:'sawtooth'}];
       const el = { canvas:document.querySelector('#scope'), play:document.querySelector('#playBtn'), stop:document.querySelector('#stopBtn'), safeEnd:document.querySelector('#safeEndBtn'), safeMessage:document.querySelector('#safeMessage'), freq:document.querySelector('#frequency'), apply:document.querySelector('#applyBtn'), notice:document.querySelector('#notice'), presets:document.querySelector('#presets'), waves:document.querySelector('#waves'), dutySection:document.querySelector('#dutySection'), duties:document.querySelector('#duties'), volume:document.querySelector('#volume'), volumeValue:document.querySelector('#volumeValue'), lamp:document.querySelector('#lamp'), status:document.querySelector('#statusText'), version:document.querySelector('#versionText'), updated:document.querySelector('#updatedText') };

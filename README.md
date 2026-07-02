@@ -21,10 +21,16 @@
 
 ## 更新履歴
 
+### v0.1.4（2026-07-02）
+
+- PWAアイコンをOSCILLOSCOPE専用アイコンへ変更
+- apple-touch-icon / icon-192 / icon-512 / favicon を整理
+- manifest.json / manifest.webmanifest のアイコン設定を確認
+- README.md を追加
+- GitHub Pages向けの表示名を OSCILLOSCOPE に統一
+
 ### v0.1.3（2026-07-01）
 
 - AudioContext安定化
 - 音声処理安全終了追加
 - バージョン表示追加
-- PWA設定改善
-- アイコン更新
